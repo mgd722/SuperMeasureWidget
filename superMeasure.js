@@ -4,6 +4,7 @@ require([
 
     "esri/map",
     "esri/dijit/Measurement",
+    "esri/units",
     "esri/tasks/GeometryService",
     "esri/geometry/Point",
     "esri/symbols/TextSymbol",
@@ -16,7 +17,7 @@ require([
     "dijit/form/CheckBox", 
     "dojo/domReady!"
   ], function(
-    dom, parser, Map, Measurement, GeometryService, Point, TextSymbol, GraphicsLayer, graphic
+    dom, parser, Map, Measurement, Units, GeometryService, Point, TextSymbol, GraphicsLayer, graphic
   ){
     parser.parse();
 
@@ -66,7 +67,8 @@ require([
     }
 
     var measurement = new Measurement({
-      map: map
+      map: map,
+      defaultLengthUnit: Units.FEET
     }, dom.byId("measurementDiv"));
     measurement.startup();
 
@@ -85,7 +87,7 @@ require([
 
       // Calculate and format current segment length
       var segLength = evt.values - prevLineLength;
-      segLength = segLength.toFixed(3);
+      segLength = segLength.toFixed(2);
 
       // Reset this value for the next segment's calculation
       prevLineLength = evt.values;
