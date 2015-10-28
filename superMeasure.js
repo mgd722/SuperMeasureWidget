@@ -58,6 +58,13 @@ require([
         return m*-1;
     }
 
+    // Clears the graphics and resets the supporting variables to set up a new line
+    function clearLineInfo(){
+      prevLineLength = 0;
+      segs = [];
+      measureText.clear();
+    }
+
     var measurement = new Measurement({
       map: map
     }, dom.byId("measurementDiv"));
@@ -89,14 +96,11 @@ require([
       measureText.add(segText);
     });
 
-    // This is needed because on('measure') doesn't capture the first coordinate :(
-    measurement.on('measure-start', getCursorLocation);
-
-    // Clears the graphics and resets the supporting variables
-    measurement.on('tool-change', function(){
-      prevLineLength = 0;
-      segs = [];
-      measureText.clear();
+    measurement.on('measure-start', function(){
+      clearLineInfo();
+      getCursorLocation(); // This is needed because on('measure') doesn't capture the first coordinate :(
     });
+
+    measurement.on('tool-change', clearLineInfo);
   }
 );
