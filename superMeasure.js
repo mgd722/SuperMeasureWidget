@@ -8,6 +8,7 @@ require([
     "esri/tasks/GeometryService",
     "esri/geometry/Point",
     "esri/symbols/TextSymbol",
+    "esri/symbols/Font",
     "esri/layers/GraphicsLayer",
     "esri/graphic",
 
@@ -17,7 +18,7 @@ require([
     "dijit/form/CheckBox", 
     "dojo/domReady!"
   ], function(
-    dom, parser, Map, Measurement, Units, GeometryService, Point, TextSymbol, GraphicsLayer, graphic
+    dom, parser, Map, Measurement, Units, GeometryService, Point, TextSymbol, Font, GraphicsLayer, graphic
   ){
     parser.parse();
 
@@ -59,6 +60,17 @@ require([
         return m*-1;
     }
 
+    // Returns a suitable label offset based on line slope
+    function getOffset(slope){
+      var x;
+      if (slope > 0){
+        x = 10;
+      } else {
+        x = -10;
+      }
+      return {x:x, y:10};
+    }
+
     // Clears the graphics and resets the supporting variables to set up a new line
     function clearLineInfo(){
       prevLineLength = 0;
@@ -92,7 +104,12 @@ require([
       // Reset this value for the next segment's calculation
       prevLineLength = evt.values;
 
-      var textSymbol = new TextSymbol(segLength).setAngle(getSlope(segs));
+      // Gets/sets appropriate values for text symbol
+      var slope = getSlope(segs);
+      var offset = getOffset(slope);
+      var font = new Font("12pt", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLD, "Helvetica");
+      
+      var textSymbol = new TextSymbol(segLength).setAngle(slope).setOffset(offset.x, offset.y).setFont(font);
       var midpoint = getMidpoint(segs);
       var segText = new graphic(midpoint, textSymbol);
       measureText.add(segText);
