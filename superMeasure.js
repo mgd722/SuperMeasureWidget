@@ -87,15 +87,16 @@ require([
       }
 
       var factors = {
-        'Miles': {'Kilometers': 1.60934, 'Feet': 5280, 'Meters': 1609.34, 'Yards': 1760, 'Nautical Miles': 0.868976},
-        'Kilometers': {'Miles': 0.621371, 'Feet': 3280.84, 'Meters': 1000, 'Yards': 1093.61, 'Nautical Miles': 0.539957},
-        'Feet': {'Miles': 0.000189394, 'Kilometers': 0.000304799, 'Meters': 0.3048, 'Yards': 0.333333, 'Nautical Miles': 0.000164579},
-        'Meters': {'Miles': 0.000621371, 'Kilometers': 0.001, 'Feet': 3.28084, 'Yards': 1.09361, 'Nautical Miles': 0.000539957},
-        'Yards': {'Miles': 0.000568182, 'Kilometers': 0.0009144, 'Feet': 3, 'Meters': 0.9144, 'Nautical Miles': 0.000493737},
-        'Nautical Miles': {'Miles': 1.15078, 'Kilometers': 1.852, 'Feet': 6076.12, 'Meters': 1852, 'Yards': 2025.37}
+        'Miles': {'Kilometers': 1.60934, 'Feet': 5280, 'Meters': 1609.34, 'Yards': 1760, 'Nautical Miles': 0.868976, 'precision': 3},
+        'Kilometers': {'Miles': 0.621371, 'Feet': 3280.84, 'Meters': 1000, 'Yards': 1093.61, 'Nautical Miles': 0.539957, 'precision': 3},
+        'Feet': {'Miles': 0.000189394, 'Kilometers': 0.000304799, 'Meters': 0.3048, 'Yards': 0.333333, 'Nautical Miles': 0.000164579, 'precision': 0},
+        'Meters': {'Miles': 0.000621371, 'Kilometers': 0.001, 'Feet': 3.28084, 'Yards': 1.09361, 'Nautical Miles': 0.000539957, 'precision': 1},
+        'Yards': {'Miles': 0.000568182, 'Kilometers': 0.0009144, 'Feet': 3, 'Meters': 0.9144, 'Nautical Miles': 0.000493737, 'precision': 1},
+        'Nautical Miles': {'Miles': 1.15078, 'Kilometers': 1.852, 'Feet': 6076.12, 'Meters': 1852, 'Yards': 2025.37, 'precision': 3}
       };
 
-      return value * factors[fromUnit][toUnit];
+      value *= factors[fromUnit][toUnit];
+      return value.toFixed(factors[toUnit]['precision']);
     }
 
     var measurement = new Measurement({
