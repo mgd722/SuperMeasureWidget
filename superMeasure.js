@@ -78,6 +78,14 @@ require([
       measureText.clear();
     }
 
+    // Iterates through the graphics and updates the units as necessary
+    function updateUnits(toolName, unitName){
+      measureText.graphics.forEach(function(item){
+        item.symbol.text = 'units changed';
+      });
+      measureText.redraw();
+    }
+
     var measurement = new Measurement({
       map: map,
       defaultLengthUnit: Units.FEET
@@ -121,5 +129,7 @@ require([
     });
 
     measurement.on('tool-change', clearLineInfo);
+
+    measurement.on('unit-change', updateUnits);
   }
 );
