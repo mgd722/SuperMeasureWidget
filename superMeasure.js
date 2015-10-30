@@ -128,7 +128,7 @@ require([
 
       // Calculate and format current segment length
       var segLength = evt.values - prevLineLength;
-      segLength = segLength.toFixed(2);
+      segLength = segLength.toFixed(precision[evt.unitName]);
 
       // Reset this value for the next segment's calculation
       prevLineLength = evt.values;
