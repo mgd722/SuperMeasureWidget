@@ -30,6 +30,7 @@ require([
 
     var segs = []; // Holds the two most recent measurement points
     var prevLineLength = 0; // The total length of the line excluding the most recent segment
+    var prevUnit = ''; // The unit the map was using before a unit change
     var measureText = new GraphicsLayer(); // Stores text graphics of segment lengths
     measureText.id = 'measureText';
     map.addLayer(measureText);
@@ -78,6 +79,26 @@ require([
       measureText.clear();
     }
 
+    // Converts input from one linear unit to another
+    // I'm sure there's a library that does this but I'm bored anyway
+    function convertUnits(value, fromUnit, toUnit){
+      if (fromUnit == toUnit){
+        return value;
+      }
+
+      var factors = {
+        'Miles': {'Kilometers': 1.60934, 'Feet': 5280, 'Meters': 1609.34, 'Yards': 1760, 'Nautical Miles': 0.868976, 'precision': 3},
+        'Kilometers': {'Miles': 0.621371, 'Feet': 3280.84, 'Meters': 1000, 'Yards': 1093.61, 'Nautical Miles': 0.539957, 'precision': 3},
+        'Feet': {'Miles': 0.000189394, 'Kilometers': 0.000304799, 'Meters': 0.3048, 'Yards': 0.333333, 'Nautical Miles': 0.000164579, 'precision': 0},
+        'Meters': {'Miles': 0.000621371, 'Kilometers': 0.001, 'Feet': 3.28084, 'Yards': 1.09361, 'Nautical Miles': 0.000539957, 'precision': 1},
+        'Yards': {'Miles': 0.000568182, 'Kilometers': 0.0009144, 'Feet': 3, 'Meters': 0.9144, 'Nautical Miles': 0.000493737, 'precision': 1},
+        'Nautical Miles': {'Miles': 1.15078, 'Kilometers': 1.852, 'Feet': 6076.12, 'Meters': 1852, 'Yards': 2025.37, 'precision': 3}
+      };
+
+      value *= factors[fromUnit][toUnit];
+      return value.toFixed(factors[toUnit]['precision']);
+    }
+
     var measurement = new Measurement({
       map: map,
       defaultLengthUnit: Units.FEET
@@ -116,10 +137,21 @@ require([
     });
 
     measurement.on('measure-start', function(){
+      prevUnit = measurement.getUnit();
       clearLineInfo();
       getCursorLocation(); // This is needed because on('measure') doesn't capture the first coordinate :(
     });
 
     measurement.on('tool-change', clearLineInfo);
+
+    // Iterates through the graphics and updates the units as necessary
+    measurement.on('unit-change', function(evt){
+      measureText.graphics.forEach(function(item){
+        var value = Number(item.symbol.text);
+        item.symbol.text = convertUnits(value, prevUnit, evt.unitName);
+      });
+      measureText.redraw();
+      prevUnit = evt.unitName; // Reset this unit for the next calculation
+    });
   }
 );
