@@ -8,6 +8,7 @@ require([
     "esri/tasks/GeometryService",
     "esri/geometry/Point",
     "esri/symbols/TextSymbol",
+    "esri/symbols/Font",
     "esri/layers/GraphicsLayer",
     "esri/graphic",
 
@@ -17,7 +18,7 @@ require([
     "dijit/form/CheckBox", 
     "dojo/domReady!"
   ], function(
-    dom, parser, Map, Measurement, Units, GeometryService, Point, TextSymbol, GraphicsLayer, graphic
+    dom, parser, Map, Measurement, Units, GeometryService, Point, TextSymbol, Font, GraphicsLayer, graphic
   ){
     parser.parse();
 
@@ -103,10 +104,12 @@ require([
       // Reset this value for the next segment's calculation
       prevLineLength = evt.values;
 
+      // Gets/sets appropriate values for text symbol
       var slope = getSlope(segs);
-      var textSymbol = new TextSymbol(segLength).setAngle(slope);
       var offset = getOffset(slope);
-      textSymbol.setOffset(offset.x, offset.y);
+      var font = new Font("12pt", Font.STYLE_NORMAL, Font.VARIANT_NORMAL, Font.WEIGHT_BOLD, "Helvetica");
+      
+      var textSymbol = new TextSymbol(segLength).setAngle(slope).setOffset(offset.x, offset.y).setFont(font);
       var midpoint = getMidpoint(segs);
       var segText = new graphic(midpoint, textSymbol);
       measureText.add(segText);
