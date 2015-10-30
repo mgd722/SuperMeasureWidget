@@ -116,7 +116,7 @@ require([
     // Captures each completed segment and adds its length as a graphic
     measurement.on('measure', function(evt){
       // Only run if distance tool selected
-      if (measurement.getTool().toolName !== 'distance'){
+      if (evt.toolName !== 'distance'){
         return;
       }
 
