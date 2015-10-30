@@ -59,6 +59,17 @@ require([
         return m*-1;
     }
 
+    // Returns a suitable label offset based on line slope
+    function getOffset(slope){
+      var x;
+      if (slope > 0){
+        x = 10;
+      } else {
+        x = -10;
+      }
+      return {x:x, y:10};
+    }
+
     // Clears the graphics and resets the supporting variables to set up a new line
     function clearLineInfo(){
       prevLineLength = 0;
@@ -92,7 +103,10 @@ require([
       // Reset this value for the next segment's calculation
       prevLineLength = evt.values;
 
-      var textSymbol = new TextSymbol(segLength).setAngle(getSlope(segs));
+      var slope = getSlope(segs);
+      var textSymbol = new TextSymbol(segLength).setAngle(slope);
+      var offset = getOffset(slope);
+      textSymbol.setOffset(offset.x, offset.y);
       var midpoint = getMidpoint(segs);
       var segText = new graphic(midpoint, textSymbol);
       measureText.add(segText);
