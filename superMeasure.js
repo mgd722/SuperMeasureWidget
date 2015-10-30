@@ -30,6 +30,7 @@ require([
 
     var segs = []; // Holds the two most recent measurement points
     var prevLineLength = 0; // The total length of the line excluding the most recent segment
+    var prevUnit = ''; // The unit the map was using before a unit change
     var measureText = new GraphicsLayer(); // Stores text graphics of segment lengths
     measureText.id = 'measureText';
     map.addLayer(measureText);
@@ -78,12 +79,9 @@ require([
       measureText.clear();
     }
 
-    // Iterates through the graphics and updates the units as necessary
-    function updateUnits(toolName, unitName){
-      measureText.graphics.forEach(function(item){
-        item.symbol.text = 'units changed';
-      });
-      measureText.redraw();
+    // Converts input from one linear unit to another
+    function convertUnits(value, fromUnit, toUnit){
+      return 'units changed';
     }
 
     var measurement = new Measurement({
@@ -124,6 +122,7 @@ require([
     });
 
     measurement.on('measure-start', function(){
+      prevUnit = measurement.getUnit();
       clearLineInfo();
       getCursorLocation(); // This is needed because on('measure') doesn't capture the first coordinate :(
     });
