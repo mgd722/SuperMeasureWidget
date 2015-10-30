@@ -130,6 +130,14 @@ require([
 
     measurement.on('tool-change', clearLineInfo);
 
-    measurement.on('unit-change', updateUnits);
+    // Iterates through the graphics and updates the units as necessary
+    measurement.on('unit-change', function(evt){
+      measureText.graphics.forEach(function(item){
+        var value = Number(item.symbol.text);
+        item.symbol.text = convertUnits(value, prevUnit, evt.unitName);
+      });
+      measureText.redraw();
+      prevUnit = evt.unitName; // Reset this unit for the next calculation
+    });
   }
 );
